@@ -1,6 +1,6 @@
 ## Project Title
 
-GBDA302 Week 4 Example 5: Blob Platformer (JSON + Classes)
+Week 04 Sidequest - Generate a level using arrays or JSON data
 
 ---
 
@@ -12,8 +12,7 @@ Karen Cochrane and David Han
 
 ## Description
 
-This matches the structure of the original blob sketch from Week 2 but moves
-details into classes.
+This is the week 4 sidequest where I am are working to learn how to creates different levels using arrays and JSON data
 
 ---
 
@@ -21,7 +20,7 @@ details into classes.
 
 Learning Goals:
 
-- - load JSON in preload()
+- load JSON in preload()
 - create WorldLevel from JSON
 - create BlobPlayer
 - update + draw each frame
@@ -37,6 +36,6 @@ N/A
 
 ## GenAI
 
-The code was written by Dr. Karen Cochrane and David Han but they used GenAI to write the comments.
+Documented GenAI code is found in process document
 
 ---
