@@ -81,14 +81,20 @@ class WorldLevel {
   The player draws itself separately, after the world is drawn.
   */
   drawWorld() {
-    background(color(this.theme.bg));
+    if (this.theme.bg1 && this.theme.bg2) {
+      drawVerticalGradient(this.theme.bg1, this.theme.bg2);
+    } else {
+      background(color(this.theme.bg));
+    }
+
     for (const p of this.platforms) {
       p.draw(color(this.theme.platform));
     }
+
     if (this.goal) {
       push();
       textAlign(CENTER, CENTER);
-      textSize(32);
+      textSize(75);
       text(
         this.goal.emoji,
         this.goal.x + this.goal.w / 2,
@@ -97,4 +103,12 @@ class WorldLevel {
       pop();
     }
   }
+}
+function drawVerticalGradient(c1, c2) {
+  for (let y = 0; y < height; y++) {
+    const t = y / (height - 1);
+    stroke(lerpColor(color(c1), color(c2), t));
+    line(0, y, width, y);
+  }
+  noStroke();
 }
