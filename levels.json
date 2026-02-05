@@ -17,6 +17,19 @@
       ]
     },
     {
+      "name": "Level Complete",
+      "type": "screen",
+      "next": 2,
+      "theme": { "bg": "#F0F0F0", "platform": "#C8C8C8", "blob": "#1478FF" },
+      "screen": {
+        "title": "Level Complete",
+        "subtitle": "Nice work!",
+        "prompt": "Press SPACE to continue"
+      },
+      "platforms": []
+    },
+
+    {
       "name": "Escape Run",
       "gravity": 0.7,
       "jumpV": -11.2,
@@ -36,6 +49,18 @@
 
         { "x": 40, "y": 160, "w": 120, "h": 12 }
       ]
+    },
+    {
+      "name": "The End",
+      "type": "screen",
+      "next": 0,
+      "theme": { "bg": "#F0F0F0", "platform": "#C8C8C8", "blob": "#1478FF" },
+      "screen": {
+        "title": "You Escaped!",
+        "subtitle": "End of demo",
+        "prompt": "Press SPACE to restart"
+      },
+      "platforms": []
     }
   ]
 }
