@@ -58,6 +58,9 @@ function draw() {
     const next = (levelIndex + 1) % data.levels.length;
     loadLevel(next);
   }
+  if (world.goal && playerTouchesGoal(player, world.goal)) {
+    onLevelComplete();
+  }
 
   // 3) HUD
   fill(0);
@@ -122,4 +125,18 @@ function onLevelComplete() {
 
   const next = (levelIndex + 1) % data.levels.length;
   loadLevel(next);
+}
+
+function playerTouchesGoal(player, goal) {
+  // Use the player's AABB (same box idea used for collisions) vs goal rect.
+  const a = {
+    x: player.x - player.r,
+    y: player.y - player.r,
+    w: player.r * 2,
+    h: player.r * 2,
+  };
+  const b = goal; // expects {x,y,w,h}
+  return (
+    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
+  );
 }
