@@ -47,6 +47,16 @@ class WorldLevel {
       y: levelJson.start?.y ?? 180,
       r: levelJson.start?.r ?? 26,
     };
+    // Optional: goal zone (used to finish the level)
+    this.goal = levelJson.goal
+      ? {
+          x: levelJson.goal.x,
+          y: levelJson.goal.y,
+          w: levelJson.goal.w,
+          h: levelJson.goal.h,
+          emoji: levelJson.goal.emoji || "🚪",
+        }
+      : null;
 
     // Convert raw platform objects into Platform instances.
     this.platforms = (levelJson.platforms || []).map((p) => new Platform(p));
@@ -74,6 +84,17 @@ class WorldLevel {
     background(color(this.theme.bg));
     for (const p of this.platforms) {
       p.draw(color(this.theme.platform));
+    }
+    if (this.goal) {
+      push();
+      textAlign(CENTER, CENTER);
+      textSize(32);
+      text(
+        this.goal.emoji,
+        this.goal.x + this.goal.w / 2,
+        this.goal.y + this.goal.h / 2,
+      );
+      pop();
     }
   }
 }

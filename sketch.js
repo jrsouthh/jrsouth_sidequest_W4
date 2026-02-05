@@ -20,6 +20,7 @@ let levelIndex = 0;
 
 let world; // WorldLevel instance (current level)
 let player; // BlobPlayer instance
+let levelJustCompleted = false;
 
 function preload() {
   // Load the level data from disk before setup runs.
@@ -46,6 +47,17 @@ function draw() {
   // 2) Update and draw the player on top of the world
   player.update(world.platforms);
   player.draw(world.theme.blob);
+
+  // Win condition: touch the goal zone
+  if (
+    !levelJustCompleted &&
+    world.goal &&
+    playerTouchesGoal(player, world.goal)
+  ) {
+    levelJustCompleted = true;
+    const next = (levelIndex + 1) % data.levels.length;
+    loadLevel(next);
+  }
 
   // 3) HUD
   fill(0);
@@ -74,6 +86,7 @@ Load a level by index:
 */
 function loadLevel(i) {
   levelIndex = i;
+  levelJustCompleted = false;
 
   // Create the world object from the JSON level object.
   world = new WorldLevel(data.levels[levelIndex]);
@@ -85,4 +98,20 @@ function loadLevel(i) {
 
   // Apply level settings + respawn.
   player.spawnFromLevel(world);
+}
+
+function playerTouchesGoal(player, goal) {
+  // Player AABB (same box style used for platform collisions)
+  const box = {
+    x: player.x - player.r,
+    y: player.y - player.r,
+    w: player.r * 2,
+    h: player.r * 2,
+  };
+  return (
+    box.x < goal.x + goal.w &&
+    box.x + box.w > goal.x &&
+    box.y < goal.y + goal.h &&
+    box.y + box.h > goal.y
+  );
 }
