@@ -22,53 +22,54 @@ let world; // WorldLevel instance (current level)
 let player; // BlobPlayer instance
 let levelJustCompleted = false;
 
+// Prevent the goal from triggering instantly right after a level loads
+let goalDelay = 0;
+
 function preload() {
-  // Load the level data from disk before setup runs.
   data = loadJSON("levels.json");
 }
 
 function setup() {
-  // IMPORTANT: create a canvas once BEFORE any resizeCanvas calls.
-  // (resizeCanvas does nothing until a canvas exists)
+  // Create a canvas once BEFORE resizeCanvas is used
   createCanvas(640, 360);
 
-  // Create the player once (it will be respawned per level).
   player = new BlobPlayer();
-
-  // Load the first level.
   loadLevel(0);
 
-  // Simple shared style setup.
   noStroke();
   textFont("sans-serif");
   textSize(14);
 }
 
 function draw() {
-  // 1) Draw the world (background + platforms)
+  // 1) Draw the world (background + platforms / goal)
   world.drawWorld();
 
-  // 2) Screen levels: show overlay + pause gameplay
+  // 2) Screen levels: show overlay + pause gameplay (no updates)
   if (world.type === "screen") {
     drawScreenOverlay(world);
-    return; // stops updates/drawing for gameplay
+    return;
   }
 
-  // 3) Play levels: update + draw player
+  // 3) Only count down the goal delay during playable levels
+  if (goalDelay > 0) goalDelay--;
+
+  // 4) Play levels: update + draw player
   player.update(world.platforms);
   player.draw(world.theme.blob);
 
-  // 4) Win condition: trigger ONCE
+  // 5) Win condition: trigger ONCE (and not during the initial delay)
   if (
+    goalDelay === 0 &&
     !levelJustCompleted &&
     world.goal &&
     playerTouchesGoal(player, world.goal)
   ) {
     levelJustCompleted = true;
-    onLevelComplete(); // uses world.next if present
+    onLevelComplete();
   }
 
-  // 5) HUD
+  // 6) HUD
   fill(0);
   text(world.name, 10, 18);
   text("Move: A/D or ←/→ • Jump: Space/W/↑ • Next: N", 10, 36);
@@ -103,20 +104,19 @@ function loadLevel(i) {
   levelIndex = i;
   levelJustCompleted = false;
 
-  // Create the world object from the JSON level object.
   world = new WorldLevel(data.levels[levelIndex]);
 
-  // Fit canvas to world geometry (or defaults if needed).
   const W = world.inferWidth(640);
   const H = world.inferHeight(360);
   resizeCanvas(W, H);
 
-  // Apply level settings + respawn.
   player.spawnFromLevel(world);
+
+  // Delay goal checks briefly so new levels can't instantly complete
+  goalDelay = 15; // ~0.25 seconds at 60fps
 }
 
 function playerTouchesGoal(player, goal) {
-  // Player AABB (same box style used for platform collisions)
   const box = {
     x: player.x - player.r,
     y: player.y - player.r,
