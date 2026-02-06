@@ -44,6 +44,11 @@ function draw() {
   // 1) Draw the world (background + platforms)
   world.drawWorld();
 
+  if (world.type === "screen") {
+    drawScreenOverlay(world);
+    return; // stops the blob update so gameplay is paused
+  }
+
   // 2) Update and draw the player on top of the world
   player.update(world.platforms);
   player.draw(world.theme.blob);
@@ -69,6 +74,11 @@ function draw() {
 }
 
 function keyPressed() {
+  if (world.type === "screen" && key === " ") {
+    loadLevel(world.next ?? 0);
+    return;
+  }
+
   // Jump keys
   if (key === " " || key === "W" || key === "w" || keyCode === UP_ARROW) {
     player.jump();
@@ -120,10 +130,7 @@ function playerTouchesGoal(player, goal) {
 }
 
 function onLevelComplete() {
-  if (levelJustCompleted) return; // guard so it only triggers once
-  levelJustCompleted = true;
-
-  const next = (levelIndex + 1) % data.levels.length;
+  const next = world.next ?? (levelIndex + 1) % data.levels.length;
   loadLevel(next);
 }
 
@@ -139,4 +146,25 @@ function playerTouchesGoal(player, goal) {
   return (
     a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
   );
+
+  function drawScreenOverlay(world) {
+    const title = world.screen?.title || world.name || "";
+    const subtitle = world.screen?.subtitle || "";
+    const prompt = world.screen?.prompt || "Press SPACE";
+
+    push();
+    fill(0);
+    textAlign(CENTER, CENTER);
+
+    textSize(32);
+    text(title, width / 2, height * 0.4);
+
+    textSize(18);
+    if (subtitle) text(subtitle, width / 2, height * 0.52);
+
+    textSize(16);
+    text(prompt, width / 2, height * 0.68);
+
+    pop();
+  }
 }

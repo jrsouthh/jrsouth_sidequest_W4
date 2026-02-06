@@ -30,6 +30,10 @@ class WorldLevel {
     // A readable label for HUD.
     this.name = levelJson.name || "Level";
 
+    this.type = levelJson.type || "play";
+    this.next = levelJson.next;
+    this.screen = levelJson.screen || null;
+
     // Theme defaults + override with JSON.
     this.theme = Object.assign(
       { bg: "#F0F0F0", platform: "#C8C8C8", blob: "#1478FF" },
