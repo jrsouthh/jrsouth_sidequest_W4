@@ -1,5 +1,5 @@
 /*
-Week 4 — Example 5: Example 5: Blob Platformer (JSON + Classes)
+Week 4 — Example 5: Blob Platformer (JSON + Classes)
 Course: GBDA302
 Instructors: Dr. Karen Cochrane and David Han
 Date: Feb. 5, 2026
@@ -28,6 +28,10 @@ function preload() {
 }
 
 function setup() {
+  // IMPORTANT: create a canvas once BEFORE any resizeCanvas calls.
+  // (resizeCanvas does nothing until a canvas exists)
+  createCanvas(640, 360);
+
   // Create the player once (it will be respawned per level).
   player = new BlobPlayer();
 
@@ -44,47 +48,45 @@ function draw() {
   // 1) Draw the world (background + platforms)
   world.drawWorld();
 
+  // 2) Screen levels: show overlay + pause gameplay
   if (world.type === "screen") {
     drawScreenOverlay(world);
-    return; // stops the blob update so gameplay is paused
+    return; // stops updates/drawing for gameplay
   }
 
-  // 2) Update and draw the player on top of the world
+  // 3) Play levels: update + draw player
   player.update(world.platforms);
   player.draw(world.theme.blob);
 
-  // Win condition: touch the goal zone
+  // 4) Win condition: trigger ONCE
   if (
     !levelJustCompleted &&
     world.goal &&
     playerTouchesGoal(player, world.goal)
   ) {
     levelJustCompleted = true;
-    const next = (levelIndex + 1) % data.levels.length;
-    loadLevel(next);
-  }
-  if (world.goal && playerTouchesGoal(player, world.goal)) {
-    onLevelComplete();
+    onLevelComplete(); // uses world.next if present
   }
 
-  // 3) HUD
+  // 5) HUD
   fill(0);
   text(world.name, 10, 18);
   text("Move: A/D or ←/→ • Jump: Space/W/↑ • Next: N", 10, 36);
 }
 
 function keyPressed() {
+  // Screen levels: SPACE advances (no jumping on screens)
   if (world.type === "screen" && key === " ") {
     loadLevel(world.next ?? 0);
     return;
   }
 
-  // Jump keys
+  // Jump keys (play levels only)
   if (key === " " || key === "W" || key === "w" || keyCode === UP_ARROW) {
     player.jump();
   }
 
-  // Optional: cycle levels with N (as with the earlier examples)
+  // Optional: cycle levels with N (works for play + screen levels)
   if (key === "n" || key === "N") {
     const next = (levelIndex + 1) % data.levels.length;
     loadLevel(next);
@@ -121,6 +123,7 @@ function playerTouchesGoal(player, goal) {
     w: player.r * 2,
     h: player.r * 2,
   };
+
   return (
     box.x < goal.x + goal.w &&
     box.x + box.w > goal.x &&
@@ -130,41 +133,28 @@ function playerTouchesGoal(player, goal) {
 }
 
 function onLevelComplete() {
+  // Use JSON routing when provided; otherwise default to next in array
   const next = world.next ?? (levelIndex + 1) % data.levels.length;
   loadLevel(next);
 }
 
-function playerTouchesGoal(player, goal) {
-  // Use the player's AABB (same box idea used for collisions) vs goal rect.
-  const a = {
-    x: player.x - player.r,
-    y: player.y - player.r,
-    w: player.r * 2,
-    h: player.r * 2,
-  };
-  const b = goal; // expects {x,y,w,h}
-  return (
-    a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
-  );
+function drawScreenOverlay(world) {
+  const title = world.screen?.title || world.name || "";
+  const subtitle = world.screen?.subtitle || "";
+  const prompt = world.screen?.prompt || "Press SPACE";
 
-  function drawScreenOverlay(world) {
-    const title = world.screen?.title || world.name || "";
-    const subtitle = world.screen?.subtitle || "";
-    const prompt = world.screen?.prompt || "Press SPACE";
+  push();
+  fill(0);
+  textAlign(CENTER, CENTER);
 
-    push();
-    fill(0);
-    textAlign(CENTER, CENTER);
+  textSize(32);
+  text(title, width / 2, height * 0.4);
 
-    textSize(32);
-    text(title, width / 2, height * 0.4);
+  textSize(18);
+  if (subtitle) text(subtitle, width / 2, height * 0.52);
 
-    textSize(18);
-    if (subtitle) text(subtitle, width / 2, height * 0.52);
+  textSize(16);
+  text(prompt, width / 2, height * 0.68);
 
-    textSize(16);
-    text(prompt, width / 2, height * 0.68);
-
-    pop();
-  }
+  pop();
 }

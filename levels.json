@@ -2,8 +2,9 @@
   "schemaVersion": 1,
   "levels": [
     {
-      "name": "Intro Steps",
+      "name": "Level 1",
       "gravity": 0.65,
+      "next": 1,
       "jumpV": -11.0,
       "theme": { "bg": "#F0F0F0", "platform": "#C8C8C8", "blob": "#1478FF" },
       "start": { "x": 80, "y": 220, "r": 26 },
@@ -32,6 +33,7 @@
 
     {
       "name": "Escape Run",
+      "next": 3,
       "gravity": 0.7,
       "jumpV": -11.9,
       "theme": { "bg": "#F0F0F0", "platform": "#C8C8C8", "blob": "#1478FF" },
