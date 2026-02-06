@@ -6,13 +6,13 @@ Week 04 Sidequest - Generate a level using arrays or JSON data
 
 ## Authors
 
-Karen Cochrane and David Han
+Karen Cochrane and David Han - Edited by Jenny South
 
 ---
 
 ## Description
 
-This is the week 4 sidequest where I am are working to learn how to creates different levels using arrays and JSON data
+This is the week 4 sidequest where I am are working to learn how to create different levels using arrays and JSON data
 
 ---
 
